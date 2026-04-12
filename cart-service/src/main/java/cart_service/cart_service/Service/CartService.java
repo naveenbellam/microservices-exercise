@@ -19,49 +19,44 @@ public class CartService {
     CartRepository carts;
 
     // get carts
-    List<CartEntity> getAllCarts(){
+    public List<CartEntity> getAllCarts(){
         return carts.findAll();
     }
     //get cart items
-    List<CartItemEntity> getAllCartsItems(){
+    public  List<CartItemEntity> getAllCartsItems(){
         return cartItems.findAll();
     }
     // post new cart
-    void addCart(CartEntity cart){
+    public void addCart(CartEntity cart){
         carts.save(cart);
     }
     //post new cart items
-    void addCartItems(CartItemEntity cartItem){
+    public void addCartItems(CartItemEntity cartItem){
         cartItems.save(cartItem);
     }
     // put cart
-    void updateCart(CartEntity cart){
-        List<CartEntity> carts1 = carts.findAll();
-        for (CartEntity c : carts1){
-            if(c.getId()==cart.getId())
-            {
-                c.setUserId(cart.getUserId());
-            }
+    public  void updateCart(CartEntity cart){
+        CartEntity cart1 = carts.findById(cart.getUserId()).orElse(null);
+        if(cart1!=null){
+            carts.delete(cart1);
+            carts.save(cart);
         }
     }
     //put cart items
-    void updateCartItems(CartItemEntity cartItem){
-        List<CartItemEntity> cartItems1 =cartItems.findAll();
-        for(CartItemEntity it : cartItems1){
-            if (it.getCartId()==cartItem.getCartId())
-            {
-                it.setId(cartItem.getId());
-                it.setQuantity(cartItem.getQuantity());
-                it.setProductId(cartItem.getProductId());
-            }
+    public void updateCartItems(CartItemEntity cartItem){
+        CartItemEntity cartItem1=cartItems.findById(cartItem.getProductId()).orElse(null);
+        if(cartItem1!=null)
+        {
+            cartItems.delete(cartItem1);
+            cartItems.save(cartItem);
         }
     }
     //delete cart
-    void deleteCart(CartEntity cart) {
+    public  void deleteCart(CartEntity cart) {
         carts.delete(cart);
     }
     // delete items
-    void deleteCartItem(CartItemEntity cartItem){
+    public void deleteCartItem(CartItemEntity cartItem){
         cartItems.delete(cartItem);
     }
 
