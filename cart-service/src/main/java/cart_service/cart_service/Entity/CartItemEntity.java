@@ -11,11 +11,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartitemEntity {
+public class CartItemEntity {
 
-    @Id
+
     private  String id;
-    private String cartid;
-    private String productid;
+    @Id
+    private String cartId;
+    private String productId;
     private int quantity;
 }
