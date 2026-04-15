@@ -1,9 +1,7 @@
 package cart_service.cart_service.Repository;
 
-import cart_service.cart_service.Entity.CartEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import cart_service.cart_service.Entity.CartEntity;
 
-@Repository
-public interface CartRepository extends JpaRepository<CartEntity,String> {
+public interface CartRepository extends JpaRepository<CartEntity, String> {
 }

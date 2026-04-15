@@ -1,61 +1,94 @@
 package cart_service.cart_service.Controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 import cart_service.cart_service.Entity.CartEntity;
 import cart_service.cart_service.Entity.CartItemEntity;
 import cart_service.cart_service.Service.CartService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/cart")
 public class CartController {
 
     @Autowired
-    CartService cartService;
+    private CartService cartService;
 
-    @GetMapping("/carts")
-    List<CartEntity> getAllCarts(){
+    // CART
+
+    @PostMapping
+    public CartEntity addCart(@RequestBody CartEntity cart) {
+        return cartService.addCart(cart);
+    }
+
+    @GetMapping
+    public List<CartEntity> getAllCarts() {
         return cartService.getAllCarts();
     }
 
-    @GetMapping("/cartItems")
-    List<CartItemEntity> getAllCartItems(){
-        return cartService.getAllCartsItems();
+    @PutMapping("/{id}")
+    public CartEntity updateCart(@PathVariable String id,
+                                 @RequestBody CartEntity cart) {
+        return cartService.updateCart(id, cart);
     }
 
-    //
-    @PostMapping("/addCarts")
-    void addCart(@RequestBody CartEntity cart )
-    {
-        cartService.addCart(cart);
+    @DeleteMapping("/{id}")
+    public void deleteCart(@PathVariable String id) {
+        cartService.deleteCart(id);
     }
 
-    @PostMapping("/addCartItems")
-    void addCartItem(@RequestBody  CartItemEntity cartItem){
-        cartService.addCartItems(cartItem);
+    // CART ITEM
+
+    @PostMapping("/item")
+    public CartItemEntity addCartItem(@RequestBody CartItemEntity item) {
+        return cartService.addCartItem(item);
     }
 
-    //put
-    @PutMapping("/updateCarts")
-    void updateCart(@RequestBody CartEntity cart){
-        cartService.updateCart(cart);
-
-    }
-    //put
-    @PutMapping("/updateCartItems")
-    void updateCartItems(@RequestBody CartItemEntity cartItemEntity){
-        cartService.updateCartItems(cartItemEntity);
+    @GetMapping("/item")
+    public List<CartItemEntity> getAllCartItems() {
+        return cartService.getAllCartItems();
     }
 
-    //delete
-    @DeleteMapping("/deleteCart")
-    void deleteCart(@RequestBody CartEntity cart){
-        cartService.deleteCart(cart);
+    @PutMapping("/item/{id}")
+    public CartItemEntity updateCartItem(@PathVariable String id,
+                                         @RequestBody CartItemEntity item) {
+        return cartService.updateCartItem(id, item);
     }
-    //delete
-    @DeleteMapping("/deleteCartItems")
-    void deleteCartItem(@RequestBody CartItemEntity cartItem){
-        cartService.deleteCartItem(cartItem);
+
+    @DeleteMapping("/item/{id}")
+    public void deleteCartItem(@PathVariable String id) {
+        cartService.deleteCartItem(id);
+    }
+
+    @GetMapping("/paged")
+    public Page<CartEntity> getCarts(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sortBy) {
+
+        return cartService.getCarts(page, size, sortBy);
+    }
+
+    @GetMapping("/items/paged")
+    public Page<CartItemEntity> getCartItems(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sortBy) {
+
+        return cartService.getCartItems(page, size, sortBy);
+    }
+
+    @GetMapping("/items/filter")
+    public List<CartItemEntity> getItemsByMinQuantity(
+            @RequestParam int qty) {
+
+        return cartService.getItemsByMinQuantity(qty);
+    }
+
+    @GetMapping("/items/productIds")
+    public List<String> getAllProductIds() {
+        return cartService.getAllProductIdsInCart();
     }
 }

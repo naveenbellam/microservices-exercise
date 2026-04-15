@@ -1,49 +1,78 @@
 package product_service.product_service.Service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import product_service.product_service.Entity.ProductEntity;
 import product_service.product_service.Repository.ProductRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
     @Autowired
-    ProductRepository products;
-    //post
+    private ProductRepository productRepository;
 
-    public void addProduct(ProductEntity product){
-        products.save(product);
-    }
-    //get
-    public  List<ProductEntity> getAllProducts(){
-        return  products.findAll();
-    }
-    //put
-    public  void updateProduct(ProductEntity product){
-        ProductEntity product1 =products.findById(product.getId()).orElse(null);
-        if(product1!=null && product1.getId()==product.getId() ) {
-            products.delete(product1);
-            products.save(product);
-        }
-    }
-    //Delete
-    public  void deleteProduct(ProductEntity product){
-        products.delete(product);
+    // CREATE
+    public ProductEntity addProduct(ProductEntity product) {
+        return productRepository.save(product);
     }
 
-    // Validate stock
-    public  Boolean validateStock(String productId){
-        List<ProductEntity> pro = products.findAll();
-        for(ProductEntity p : pro){
-            if(p.getId() == productId && p.getStock()>0)
-                return true;
-        }
-        return false;
+    // GET ALL
+    public List<ProductEntity> getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    // UPDATE
+    public ProductEntity updateProduct(String id, ProductEntity product) {
+        ProductEntity existing = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        existing.setName(product.getName());
+        existing.setPrice(product.getPrice());
+        existing.setStock(product.getStock());
+
+        return productRepository.save(existing);
+    }
+
+    // DELETE
+    public void deleteProduct(String id) {
+        productRepository.deleteById(id);
+    }
+
+    // VALIDATE STOCK
+    public boolean validateStock(String productId) {
+        return productRepository.findById(productId)
+                .map(p -> p.getStock() != null && p.getStock() > 0)
+                .orElse(false);
+    }
+
+    public Page<ProductEntity> getProducts(int page, int size, String sortBy) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return productRepository.findAll(pageable);
+    }
+
+    public List<ProductEntity> getFilteredProducts(double minPrice) {
+
+        return productRepository.findAll()
+                .stream()
+                .filter(p -> p.getPrice() > minPrice)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getProductNames() {
+
+        return productRepository.findAll()
+                .stream()
+                .map(ProductEntity::getName)
+                .collect(Collectors.toList());
     }
 
 }
