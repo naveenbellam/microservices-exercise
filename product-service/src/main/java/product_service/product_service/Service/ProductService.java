@@ -75,4 +75,8 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductEntity> getExpensiveProducts(Double price) {
+        return productRepository.findExpensiveProducts(price);
+    }
+
 }

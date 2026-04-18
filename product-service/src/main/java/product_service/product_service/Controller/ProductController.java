@@ -60,4 +60,9 @@ public class ProductController {
     public List<String> getProductNames() {
         return productService.getProductNames();
     }
+
+    @GetMapping("/expensive")
+    public List<ProductEntity> getExpensiveProducts(@RequestParam Double price) {
+        return productService.getExpensiveProducts(price);
+    }
 }

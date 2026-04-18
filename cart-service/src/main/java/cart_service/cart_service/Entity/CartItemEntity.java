@@ -2,20 +2,22 @@ package cart_service.cart_service.Entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "cartitem_entity")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartItemEntity {
 
     @Id
-    private String id;
+    private Integer id;
 
-    private String cartId;
+    private Integer cartId;
     private String productId;
     private int quantity;
 }
