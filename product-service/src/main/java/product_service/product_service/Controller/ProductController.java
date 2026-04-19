@@ -21,6 +21,11 @@ public class ProductController {
         return productService.addProduct(product);
     }
 
+    @GetMapping("/{id}")
+    public ProductEntity getProductById(@PathVariable String id) {
+        return productService.getProductById(id);
+    }
+
     // GET ALL
     @GetMapping
     public List<ProductEntity> getAllProducts() {
@@ -65,4 +70,5 @@ public class ProductController {
     public List<ProductEntity> getExpensiveProducts(@RequestParam Double price) {
         return productService.getExpensiveProducts(price);
     }
+
 }

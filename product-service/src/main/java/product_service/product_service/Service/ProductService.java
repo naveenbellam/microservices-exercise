@@ -79,4 +79,10 @@ public class ProductService {
         return productRepository.findExpensiveProducts(price);
     }
 
+    public ProductEntity getProductById(String id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+
 }
