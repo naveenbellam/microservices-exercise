@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import java.util.stream.Collectors;
 import cart_service.cart_service.DTO.ProductDto;
 import org.springframework.web.reactive.function.client.WebClient;
+import cart_service.cart_service.DTO.CartEvent;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,9 @@ public class CartService {
 
     @Autowired
     private WebClient webClient;
+
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
 
     public List<CartEntity> getAllCarts() {
         return cartRepository.findAll();
@@ -60,7 +64,17 @@ public class CartService {
             throw new RuntimeException("Insufficient stock");
         }
 
-        return cartItemRepository.save(cartItemEntity);
+        CartItemEntity savedItem = cartItemRepository.save(cartItemEntity);
+
+        CartEvent event = new CartEvent(
+                savedItem.getCartId(),
+                savedItem.getProductId(),
+                savedItem.getQuantity()
+        );
+
+        kafkaProducerService.sendCartEvent(event);
+
+        return savedItem;
     }
 
     public void deleteCartItem(Integer id) {
