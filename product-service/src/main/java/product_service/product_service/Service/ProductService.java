@@ -18,17 +18,14 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    // CREATE
     public ProductEntity addProduct(ProductEntity product) {
         return productRepository.save(product);
     }
 
-    // GET ALL
     public List<ProductEntity> getAllProducts() {
         return productRepository.findAll();
     }
 
-    // UPDATE
     public ProductEntity updateProduct(String id, ProductEntity product) {
         ProductEntity existing = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -40,12 +37,10 @@ public class ProductService {
         return productRepository.save(existing);
     }
 
-    // DELETE
     public void deleteProduct(String id) {
         productRepository.deleteById(id);
     }
 
-    // VALIDATE STOCK
     public boolean validateStock(String productId) {
         return productRepository.findById(productId)
                 .map(p -> p.getStock() != null && p.getStock() > 0)
@@ -53,14 +48,11 @@ public class ProductService {
     }
 
     public Page<ProductEntity> getProducts(int page, int size, String sortBy) {
-
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
-
         return productRepository.findAll(pageable);
     }
 
     public List<ProductEntity> getFilteredProducts(double minPrice) {
-
         return productRepository.findAll()
                 .stream()
                 .filter(p -> p.getPrice() > minPrice)
@@ -68,7 +60,6 @@ public class ProductService {
     }
 
     public List<String> getProductNames() {
-
         return productRepository.findAll()
                 .stream()
                 .map(ProductEntity::getName)
@@ -83,6 +74,4 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
-
-
 }

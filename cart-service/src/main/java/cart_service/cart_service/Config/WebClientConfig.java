@@ -1,5 +1,6 @@
 package cart_service.cart_service.Config;
 
+import cart_service.cart_service.DTO.ProductDto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;

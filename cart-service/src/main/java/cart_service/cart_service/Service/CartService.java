@@ -1,5 +1,6 @@
 package cart_service.cart_service.Service;
 
+import cart_service.cart_service.DTO.CartEvent;
 import cart_service.cart_service.Entity.CartEntity;
 import cart_service.cart_service.Entity.CartItemEntity;
 import cart_service.cart_service.Repository.CartItemRepository;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import java.util.stream.Collectors;
 import cart_service.cart_service.DTO.ProductDto;
 import org.springframework.web.reactive.function.client.WebClient;
-import cart_service.cart_service.DTO.CartEvent;
 
 import java.util.List;
 import java.util.Optional;

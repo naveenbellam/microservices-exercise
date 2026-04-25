@@ -1,4 +1,4 @@
-package cart_service.cart_service.DTO;
+package product_service.product_service.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

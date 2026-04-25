@@ -19,4 +19,6 @@ public class KafkaProducerService {
         kafkaTemplate.send(TOPIC_NAME, event);
         System.out.println("Send method called");
     }
+
+
 }
