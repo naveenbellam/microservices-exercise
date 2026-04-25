@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import java.util.stream.Collectors;
 import cart_service.cart_service.DTO.ProductDto;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.util.concurrent.CompletableFuture;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +55,16 @@ public class CartService {
     }
 
     public CartItemEntity createCartItem(CartItemEntity cartItemEntity) {
-        ProductDto product = getProductFromProductService(cartItemEntity.getProductId());
+
+        ProductDto product = getProductAsync(cartItemEntity.getProductId()).join();
+
+        Boolean isStockValid = validateStockAsync(product, cartItemEntity.getQuantity()).join();
 
         if (product == null) {
             throw new RuntimeException("Product not found in product-service");
         }
 
-        if (product.getStock() == null || product.getStock() < cartItemEntity.getQuantity()) {
+        if (!isStockValid) {
             throw new RuntimeException("Insufficient stock");
         }
 
@@ -137,5 +141,16 @@ public class CartService {
         }
 
         return "Product exists and stock is sufficient";
+    }
+    public CompletableFuture<ProductDto> getProductAsync(String productId) {
+        return CompletableFuture.supplyAsync(() -> getProductFromProductService(productId));
+    }
+
+    public CompletableFuture<Boolean> validateStockAsync(ProductDto product, int quantity) {
+        return CompletableFuture.supplyAsync(() ->
+                product != null &&
+                        product.getStock() != null &&
+                        product.getStock() >= quantity
+        );
     }
 }
