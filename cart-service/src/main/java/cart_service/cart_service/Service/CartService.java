@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import cart_service.cart_service.DTO.ProductDto;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.concurrent.CompletableFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class CartService {
 
     @Autowired
     private KafkaProducerService kafkaProducerService;
+    private static final Logger logger = LoggerFactory.getLogger(CartService.class);
 
     public List<CartEntity> getAllCarts() {
         return cartRepository.findAll();
@@ -56,19 +59,25 @@ public class CartService {
 
     public CartItemEntity createCartItem(CartItemEntity cartItemEntity) {
 
+        logger.info("Create cart item request received: {}", cartItemEntity);
+
         ProductDto product = getProductAsync(cartItemEntity.getProductId()).join();
 
         Boolean isStockValid = validateStockAsync(product, cartItemEntity.getQuantity()).join();
 
         if (product == null) {
+            logger.error("Product not found: {}", cartItemEntity.getProductId());
             throw new RuntimeException("Product not found in product-service");
         }
 
         if (!isStockValid) {
+            logger.error("Insufficient stock for productId: {}", cartItemEntity.getProductId());
             throw new RuntimeException("Insufficient stock");
         }
 
         CartItemEntity savedItem = cartItemRepository.save(cartItemEntity);
+
+        logger.info("Cart item saved successfully: {}", savedItem);
 
         CartEvent event = new CartEvent(
                 savedItem.getCartId(),
@@ -77,6 +86,8 @@ public class CartService {
         );
 
         kafkaProducerService.sendCartEvent(event);
+
+        logger.info("Kafka event sent successfully: {}", event);
 
         return savedItem;
     }

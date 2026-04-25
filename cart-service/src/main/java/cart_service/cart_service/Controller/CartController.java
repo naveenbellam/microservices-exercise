@@ -4,8 +4,10 @@ import cart_service.cart_service.Entity.CartEntity;
 import cart_service.cart_service.Entity.CartItemEntity;
 import cart_service.cart_service.Service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class CartController {
     }
 
     @PostMapping("/items")
-    public CartItemEntity createCartItem(@RequestBody CartItemEntity cartItemEntity) {
+    public CartItemEntity createCartItem(@Valid @RequestBody CartItemEntity cartItemEntity) {
         return cartService.createCartItem(cartItemEntity);
     }
 
@@ -64,7 +66,7 @@ public class CartController {
     }
     @PutMapping("/items/{id}")
     public CartItemEntity updateCartItem(@PathVariable Integer id,
-                                         @RequestBody CartItemEntity cartItemEntity) {
+                                         @Valid @RequestBody CartItemEntity cartItemEntity) {
         return cartService.updateCartItem(id, cartItemEntity);
     }
 
